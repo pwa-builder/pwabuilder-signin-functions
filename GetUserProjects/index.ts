@@ -12,23 +12,15 @@ const httpTrigger: AzureFunction = async function (
 ): Promise<void> {
   const resp = await helpers.authorizeUser(req);
   if (resp) {
-    const { items } = await client.database('sample').container('user');
+    const { items } = await client.database('pwabuilder').container('project');
+    context.log('This is the id', resp.id);
     const { resources } = await items
-      .query(
-        'SELECT * FROM user WHERE user.id="' +
-          resp.id +
-          '" AND user.url="' +
-          req.body.url +
-          '"'
-      )
+      .query('SELECT * FROM c WHERE c.id="' + resp.id + '"')
       .fetchAll();
     context.log('Resources', resources);
     context.res = {
       // status: 200, /* Defaults to 200 */
-      body:
-        resources !== undefined && resources.length > 0
-          ? JSON.stringify(resources[0])
-          : null,
+      body: resources !== undefined && resources.length > 0 ? resources : null,
     };
   } else {
     context.res = {

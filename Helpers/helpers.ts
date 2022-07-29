@@ -1,8 +1,10 @@
 import fetch from 'node-fetch';
 module.exports = {
   authorizeUser: async function (req: any) {
+    // console.log('This is the request', req);
     const token = req.headers.authorization;
     const resp = await callGraphApi(token);
+    // console.log('This is the rest', resp);
     return resp;
   },
 };
