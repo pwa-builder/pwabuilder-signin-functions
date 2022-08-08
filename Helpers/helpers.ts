@@ -1,18 +1,15 @@
-import fetch from 'node-fetch';
+const nodeFetch = require('node-fetch');
 module.exports = {
   authorizeUser: async function (req: any) {
-    // console.log('This is the request', req);
     const token = req.headers.authorization;
-    const resp = await callGraphApi(token);
-    // console.log('This is the rest', resp);
-    return resp;
+    return await callGraphApi(token);
   },
 };
 async function callGraphApi(accessToken: string): Promise<any> {
   const url = `https://graph.microsoft.com/v1.0/me`;
-  const resp = await fetch(url, {
+  const resp = await nodeFetch(url, {
     method: 'GET',
-    headers: new fetch.Headers({
+    headers: new nodeFetch.Headers({
       Authorization: `${accessToken}`,
     }),
   });
