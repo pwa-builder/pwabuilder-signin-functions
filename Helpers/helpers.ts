@@ -1,4 +1,4 @@
-const nodeFetch = require('node-fetch');
+import nodeFetch from 'node-fetch';
 module.exports = {
   authorizeUser: async function (req: any) {
     const token = req.headers.authorization;

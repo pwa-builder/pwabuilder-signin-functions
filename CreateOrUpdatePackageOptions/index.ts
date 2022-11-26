@@ -1,5 +1,5 @@
 import { AzureFunction, Context, HttpRequest } from '@azure/functions';
-import { CosmosClient } from '@azure/cosmos';
+import { CosmosClient, PatchOperation } from '@azure/cosmos';
 const helpers = require('../Helpers/helpers');
 const endpoint = process.env['Endpoint'];
 const key = process.env['Key'];
@@ -11,26 +11,15 @@ const httpTrigger: AzureFunction = async function (
 ): Promise<void> {
   context.log('HTTP trigger function processed a request.');
   const resp = await helpers.authorizeUser(req);
-  const body = {
-    // create a random ID
-    url: req.body.url,
-    lastTested: req.body.lastTested,
-    maniResult: req.body.maniResult,
-    swResult: req.body.swResult,
-    secResult: req.body.secResult,
-    windowsPackageOptions: req.body.windowsPackageOptions ?? null,
-    androidPackageOptions: req.body.androidPackageOptions ?? null,
-    oculusPackageOptions: req.body.oculusPackageOptions ?? null,
-    iosPackageOptions: req.body.iosPackageOptions ?? null,
-    id: resp.id,
-  };
 
-  if (!validateUserProjectDetails(body)) {
+  //In case the entry exists already
+  if (!validateUserProjectDetails(req.body)) {
     context.res = {
       body: 'URL or user ID invalid. Please try again.',
     };
   }
-  await upsertUserDetails(body);
+  context.log('Updating package options', req.body);
+  await upsertPackageOptions(resp.id, req.body);
   // }
 
   context.res = {
@@ -46,14 +35,23 @@ function validateUserProjectDetails(body): boolean {
   return true;
 }
 
-async function upsertUserDetails(body: any) {
+async function upsertPackageOptions(id: string, body: any) {
+  const { items } = client.database('pwabuilder').container('project');
   const { database } = await client.databases.createIfNotExists({
     id: 'pwabuilder',
   });
   const { container } = await database.containers.createIfNotExists({
     id: 'project',
   });
-  container.items.upsert(body);
+  const operations = [
+    {
+      op: 'replace',
+      path: '/' + (body.platform as string).toLowerCase() + 'PackageOptions',
+      value: body.options,
+    },
+  ] as PatchOperation[];
+
+  await container.item(id, body.url).patch({ operations });
 }
 
 export default httpTrigger;

@@ -11,18 +11,19 @@ const httpTrigger: AzureFunction = async function (
   req: HttpRequest
 ): Promise<void> {
   const resp = await helpers.authorizeUser(req);
-  context.log('Inside LoginUser');
-  if (resp) {
+  if (resp && resp.id) {
     const { database } = await client.databases.createIfNotExists({
       id: 'pwabuilder',
     });
     const { container } = await database.containers.createIfNotExists({
       id: 'user',
     });
-    context.log('This is the id', resp.id);
+    console.log(resp);
     const body = {
-      userId: resp.id,
+      id: resp.id,
+      name: resp.displayName,
       lastLoggedIn: new Date(),
+      email: resp.userPrincipalName || resp.mail || 'N/A',
     };
     context.log('Body', body);
     container.items.upsert(body);
