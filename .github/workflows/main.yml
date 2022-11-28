@@ -33,4 +33,3 @@ jobs:
     - uses: actions/checkout@v2
     - name: Build the Docker Image for a PR
       run: docker build . --file Dockerfile
-   

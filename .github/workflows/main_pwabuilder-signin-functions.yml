@@ -41,4 +41,4 @@ jobs:
           app-name: 'pwabuilder-signin-functions'
           slot-name: 'Production'
           package: ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_B13EE6B73C794C819CE97FAC60E900CC }}
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_7E4A3E9A30AE4C9C94F53336B7BE3722 }}
