@@ -19,6 +19,7 @@
   },
   "dependencies": {
     "@azure/cosmos": "^3.15.1",
+    "@types/node": "^18.11.9",
     "https": "^1.0.0"
   }
 }
