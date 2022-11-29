@@ -1,7 +1,9 @@
 {
   "name": "",
   "version": "",
-  "engines": { "node": "14.15.1" },
+  "engines": {
+    "node": "12.16.0"
+  },
   "scripts": {
     "build": "npm install && tsc",
     "build:production": "npm run prestart",
